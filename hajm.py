@@ -20,7 +20,11 @@ soup2 = BeautifulSoup(page.content, features = 'html5lib')
 mow = str(soup2.find_all('script')[9])
 rooz = re.findall('\d+ روز', mow)[0]
 rooz = re.findall('\d+', rooz)[0]
-mow = int(''.join(re.findall('\d+', mow[2300:2400]))) / 1024 / 4
+pack=list(re.finditer('مگابایت', mow))
+start_s = pack[0].start() - 50
+end_s = pack[0].end() + 50
+mow =''.join(re.findall('\d+', mow[start_s:end_s]))
+print(mow)
 f_day = int(re.findall('\d+', rooz)[0]) / 30 * 94
-print ("hajm baghimande = %.2f GB" % mow)
-print ("rooz baghimande = %s rooz" % rooz)
+#print ("hajm baghimande = %.2f GB" % mow)
+#print ("rooz baghimande = %s rooz" % rooz)
