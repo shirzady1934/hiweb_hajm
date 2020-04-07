@@ -1,11 +1,12 @@
+#!/bin/python
 from bs4 import BeautifulSoup
 import requests
 import re
 try:
 	from config import username, password
 except:
-	username = input('username = ')
-	password = input('password = ')
+	username = '2903015'#input('username = ')
+	password = '137651'#input('password = ')
 url = 'http://panel.hiweb.ir/panel.php?logout='
 result = requests.get(url)
 soup = BeautifulSoup(result.content, features = 'html5lib')
@@ -25,10 +26,17 @@ soup2 = BeautifulSoup(page.content, features = 'html5lib')
 mow = str(soup2.find_all('script')[9])
 rooz = re.findall('\d+ روز', mow)[0]
 rooz = re.findall('\d+', rooz)[0]
-pack=list(re.finditer('مگابایت', mow))
-start_s = pack[0].start() - 50
-end_s = pack[0].end() + 50
-volume =''.join(re.findall('\d+', mow[start_s:end_s]))
-cal_volume = int(volume) / 1024 / 4
-print ("hajm baghimande = %.2f GB" % cal_volume)
+pack = re.finditer('مگابایت', mow)
+hajm = []
+for vol in pack:
+    hajm.append((vol.start() - 50, vol.end() + 50))
+#start_s = pack[0].start() - 50
+#end_s = pack[0].end() + 50
+for counter in range(len(hajm)):
+    volume =''.join(re.findall('\d+', mow[hajm[counter][0]:hajm[counter][1]]))
+    cal_volume = int(volume) / 1024 / 4
+    if counter == len(hajm) - 1:
+        print ("Hajm baghimade Kol = %.2f GB" % cal_volume)
+    else:
+        print ("hajm baghimande = %.2f GB" % cal_volume)
 print ("rooz baghimande = %s rooz" % rooz)
