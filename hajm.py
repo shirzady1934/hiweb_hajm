@@ -2,11 +2,10 @@
 from bs4 import BeautifulSoup
 import requests
 import re
-try:
-	from config import username, password
-except:
-	username = '2903015'#input('username = ')
-	password = '137651'#input('password = ')
+
+username = ''
+password = ''
+
 url = 'http://panel.hiweb.ir/panel.php?logout='
 result = requests.get(url)
 soup = BeautifulSoup(result.content, features = 'html5lib')
