@@ -24,8 +24,9 @@ browser.find_element_by_id('Password').send_keys(password)
 browser.find_element_by_css_selector('input.btn').send_keys(Keys.ENTER)
 browser.get('https://panel.hiweb.ir/bundle/list')
 time.sleep(1.5)
-
 soup = BeautifulSoup(browser.page_source, features='lxml')
+browser.stop_client()
+browser.close()
 res = soup.findAll('td', attrs={'class': ['fanum', 'ltr', 'text-center']})
 volume = re.findall('\d+', res[3].getText())[0]
 real_vol = int(volume) / 1024 / 4
