@@ -23,15 +23,20 @@ browser.find_element_by_id('Username').send_keys(username)
 browser.find_element_by_id('Password').send_keys(password)
 browser.find_element_by_css_selector('input.btn').send_keys(Keys.ENTER)
 browser.get('https://panel.hiweb.ir/bundle/list')
-time.sleep(1.5)
-soup = BeautifulSoup(browser.page_source, features='lxml')
+notfound = True
+while notfound:
+    try:
+        time.sleep(0.75)
+        soup = BeautifulSoup(browser.page_source, features='lxml')
+        res = soup.findAll('td', attrs={'class': ['fanum', 'ltr', 'text-center']})
+        volume = re.findall('\d+', res[3].getText())[0]
+        real_vol = int(volume) / 1024 / 4
+        expire_date = res[5].getText().split(' ')[2]
+        notfound = False
+    except:
+        pass
 browser.stop_client()
 browser.close()
-res = soup.findAll('td', attrs={'class': ['fanum', 'ltr', 'text-center']})
-volume = re.findall('\d+', res[3].getText())[0]
-real_vol = int(volume) / 1024 / 4
-expire_date = res[5].getText().split(' ')[2]
-
 print('Expire date: %s' % expire_date)
 print('Available volume to use: %.2f GB' % real_vol)
 
