@@ -1,6 +1,8 @@
 #!/bin/python
+import re
 import json
 import requests
+from jdatetime import datetime
 from config import username, password
 
 #disable warning for not using ssl!
@@ -26,10 +28,21 @@ js = json.loads(res.content)
 service_name = json.loads(js['data'][0][2])['ProductName']
 expire_date = json.loads(js['data'][0][-1])['ExpirationDate']
 remain_traffic = int(json.loads(js['data'][0][-3])['RemainTraffic']) / 4096
+service_months = int(re.search("Mbps-(\d+)M-", service_name).group(1))
+service_traffic = int(re.search("M-(\d+)G-", service_name).group(1))
+datelist= list(map(int, re.search('(\d+)/(\d+)/(\d+) (\d+):(\d+)', expire_date).groups()))
+exp_date = datetime(*datelist)
+now = datetime.now()
+diff = (exp_date - now).days
+should_used = service_traffic - diff / (service_months * 30) * service_traffic
+used = service_traffic - remain_traffic
+now_use =  should_used - used
 
+print(("You should use %.2fGB" if now_use > 0 else "You used too much about %.2fGB") % now_use if now_use >= 0 else -now_use)
 print('Expire date: %s' % expire_date)
 print('Available volume to use: %.2f GB' % remain_traffic)
 print("Service name: %s" % service_name)
+
 
 # This code belong to current version of hiweb\
 # website application that implemented with seleinum\
